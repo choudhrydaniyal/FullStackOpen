@@ -58,7 +58,6 @@ function App() {
       <Button onClick={handleClick("neutral")} text={"neutral"}></Button>
       <Button onClick={handleClick("bad")} text={"bad"}></Button>
       <h2>Statistics</h2>
-      <table></table>
       <Statistics good={good} neutral={neutral} bad={bad}></Statistics>
     </>
   );
