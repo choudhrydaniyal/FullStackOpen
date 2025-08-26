@@ -1,6 +1,7 @@
 import { use, useState, useEffect } from "react";
-import axios from "axios";
 import contactServices from "./services/contacts";
+import "./index.css";
+import Notification from "./components/Notification";
 
 const SearchFilter = (props) => {
   return (
@@ -59,6 +60,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     console.log("effect");
@@ -80,14 +82,29 @@ const App = () => {
           `${newName} already added to the phone book, replace the old number with the new one?`
         )
       ) {
-        contactServices.updateContact(newPerson).then((response) => {
-          console.log("Updated contact. Contact: ", response.data);
-          setPersons(
-            persons.map((p) => (p.id === person.id ? response.data : p))
-          );
-          setNewName("");
-          setNewNumber("");
-        });
+        contactServices
+          .updateContact(newPerson)
+          .then((response) => {
+            console.log("Updated contact. Contact: ", response.data);
+            setPersons(
+              persons.map((p) => (p.id === person.id ? response.data : p))
+            );
+            setNewName("");
+            setNewNumber("");
+            setErrorMessage(`Updated  ${response.data.name}`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            setPersons(persons.filter((p) => p.id !== person.id));
+            setErrorMessage(
+              `Information of ${person.name} has already been deleted.`
+            );
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+          });
       }
     } else if (newName == "" || newNumber == "") {
       alert("name or number can't be empty");
@@ -100,6 +117,10 @@ const App = () => {
         setPersons(persons.concat(response.data));
         setNewName("");
         setNewNumber("");
+        setErrorMessage(`Added  ${response.data.name}`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
       });
     }
   };
@@ -137,6 +158,7 @@ const App = () => {
         onChange={handleSearch}
       ></SearchFilter>
       <h2>Add a new contact</h2>
+      <Notification message={errorMessage}></Notification>
       <NewContactForm
         onSubmit={addPerson}
         newName={newName}
