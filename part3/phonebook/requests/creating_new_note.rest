@@ -1,7 +1,7 @@
-POST https://fullstackopen-5zx1.onrender.com/api/persons
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-    "name": "Daniyal",
-    "number": "03029262440"
+    "name": "Hira",
+    "number": "123456789"
 }
